@@ -22,7 +22,7 @@ This demo is designed to be:
 
 ## 2. Relevant HIPs and Why This Is Unique
 
-This demo relies on Hedera Improvements Proposals:
+This demo relies on the following Hedera Improvements Proposals(HIPSs):
 
 - [HIP‑755 – Schedule Service System Contract](https://hips.hedera.com/hip/hip-755)  
   Exposes the Hedera Schedule Service as a system contract (address `0x16b`) callable from EVM.
@@ -75,13 +75,13 @@ At the top of the contract:
 address internal constant HSS = address(0x16b);
 ```
 
-This is the well‑known address of the **Schedule Service system contract**. It exposes functions described in HIP‑755 and HIP‑1215, including:
-
-- `scheduleCall(...)`
-- `scheduleCallWithPayer(...)`
-- `executeCallOnPayerSignature(...)`
-- `deleteSchedule(...)`
-- `hasScheduleCapacity(...)`
+- `HSS` (`0x16b`) is the **Schedule Service system contract** (HIP‑755 / HIP‑1215).
+  - Exposes:
+    - `scheduleCall(...)`
+    - `scheduleCallWithPayer(...)`
+    - `executeCallOnPayerSignature(...)`
+    - `deleteSchedule(...)`
+    - `hasScheduleCapacity(...)`
 
 In `AlarmClockSimple`, we only use `scheduleCall(...)`.
 
@@ -223,7 +223,7 @@ This means each time the alarm fires, it schedules its next occurrence. The resu
 You can deploy `AlarmClockSimple` via:
 
 - Hardhat / Foundry
-- Hedera JSON‑RPC Relay + standard EVM tooling
+- Any EVM tooling connected to Hedera testnet/mainnet
 
 Once deployed, note the contract address, e.g.:
 
