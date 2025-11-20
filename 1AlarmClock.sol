@@ -41,6 +41,11 @@ contract AlarmClockSimple {
     event AlarmScheduled(uint256 alarmId, uint256 time);
     event AlarmTriggered(uint256 alarmId, address user, uint256 time, uint256 numTimesTriggered);
 
+    /// Funds will be used to pay the cost of executing the triggerAlarm function
+    /// and to schedule another timer in case of recurrent alarm.
+    constructor() payable { }
+    receive() external payable { }
+
     /// User calls this to set a one-shot or recurring alarm.
     /// For simplicity we choose time = block.timestamp + intervalSeconds.
     function setAlarm(bool recurring, uint256 intervalSeconds) external {
@@ -90,11 +95,12 @@ contract AlarmClockSimple {
     /// This is called automatically by the network when the scheduled time arrives.
     function triggerAlarm(uint256 alarmId) external {
         Alarm storage alarm = alarms[alarmId];
+        
+        // Only the alarm owner and this contract can trigger the alarm
+        require(msg.sender == address(this) || msg.sender == alarm.user, "Not authorized");
 
         // One-shot alarm can only fire once
-        if (!alarm.recurring) {
-            require(alarm.numTimesTriggered == 0, "Already triggered");
-        }
+        require(alarm.recurring || alarm.numTimesTriggered == 0, "Already triggered");
 
         alarm.numTimesTriggered += 1;
         emit AlarmTriggered(
@@ -109,5 +115,5 @@ contract AlarmClockSimple {
             alarm.time = alarm.time + alarm.interval;
             _scheduleAlarm(alarmId, alarm.time);
         }
-    }
+    }   
 }
