@@ -183,9 +183,11 @@ Inside `triggerAlarm`:
 ```solidity
 Alarm storage alarm = alarms[alarmId];
 
-if (!alarm.recurring) {
-    require(alarm.numTimesTriggered == 0, "Already triggered");
-}
+// Only the alarm owner and this contract can trigger the alarm
+require(msg.sender == address(this) || msg.sender == alarm.user, "Not authorized");
+
+// One-shot alarm can only fire once
+require(alarm.recurring || alarm.numTimesTriggered == 0, "Already triggered");
 
 alarm.numTimesTriggered += 1;
 emit AlarmTriggered(
